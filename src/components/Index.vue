@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 import ConfiguracaoEquipe from "./ConfiguracaoEquipe.vue";
 import Equipamentos from "./Equipamentos.vue";
 import Equipes from "./Equipes.vue";
@@ -64,32 +64,45 @@ export default {
       "setTelefones",
       "setKitsDeReanimacao",
     ]),
+    //Notacao de array
+    // ...mapActions(["fetchEquipamentos", "fetchProfissionais"]),
+    /*
+    //notacao de objeto
+    ...mapActions({
+      fetchEquipamentos:'fetchEquipamentos',
+      fetchProfissionais:'fetchProfissionais'
+    })*/
+    ...mapActions({
+      fetchEquipamentos(dispatch, payload) {
+        //implementa alguma logica
+        dispatch("fetchEquipamentos", payload);
+
+      },
+      fetchProfissionais: (dispatch) => {
+        //implementa alguma logica
+        dispatch("fetchProfissionais");
+      },
+    }),
   },
   created() {
-    fetch("http://localhost:3001/enfermeiros")
-      .then((response) => response.json())
-      .then((dados) => this.setEnfermeiros(dados));
+    /*
+    //com notação de objetos
+    this.$store.dispatch({
+      type: "fetchEquipamentos",
+      carros: true,
+      telefones:true,
+      kitsDeReanimacao: true
+    });
+    //com utilizacao direta
+    this.$store.dispatch("fetchProfissionais");
+    */
+    this.fetchEquipamentos({
+      carros: true,
+      telefones: true,
+      kitsDeReanimacao: true,
+    });
 
-    fetch("http://localhost:3001/socorristas")
-      .then((response) => response.json())
-      .then((dados) => this.setSocorristas(dados));
-
-    fetch("http://localhost:3001/medicos")
-      .then((response) => response.json())
-      .then((dados) => this.setMedicos(dados));
-
-    // fetch("http://localhost:3001/equipamentos")
-    //   .then((response) => response.json())
-    //   .then((dados) => {
-    //     this.setCarros(dados.carros);
-    //     this.setTelefones(dados);
-    //     this.setKitsDeReanimacao(dados);
-    //   });
-    fetch("http://localhost:3001/equipamentos")
-      .then((response) => response.json())
-      .then((dados) => {
-        this.$store.dispatch("adicionarEquipamentos", dados);
-      });
+    this.fetchProfissionais();
   },
 };
 </script>

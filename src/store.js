@@ -59,22 +59,42 @@ export default new Vuex.Store({
         setCarros(state, payload) {
             state.equipamentos.carros = payload;
         },
-        setTelefones(state, { telefones }) {
-            state.equipamentos.telefones = telefones;
+        setTelefones(state, payload) {
+            state.equipamentos.telefones = payload;
         },
-        setKitsDeReanimacao(state, { kitsDeReanimacao }) {
-            state.equipamentos.kitsDeReanimacao = kitsDeReanimacao;
+        setKitsDeReanimacao(state, payload) {
+            state.equipamentos.kitsDeReanimacao = payload;
         }
     },
     actions: {
-        adicionarEquipamentos(context, {carros,telefones,kitsDeReanimacao}) {
-            // console.log(payload);
-            context.commit('setCarros',carros);
-            //processamento assincrono
-            context.commit('setTelefones',{telefones});
-            //processamento assincrono
-            //diversas regras de negocio
-            context.commit('setKitsDeReanimacao',{kitsDeReanimacao});
+        fetchEquipamentos(context, { carros, telefones, kitsDeReanimacao }) {
+           
+            fetch("http://localhost:3001/equipamentos")
+                .then((response) => response.json())
+                .then((dados) => {
+                    // console.log(payload);
+                    if (carros) context.commit('setCarros', dados.carros);
+                    //processamento assincrono
+                    if (telefones) context.commit('setTelefones', dados.telefones);
+                    //processamento assincrono
+                    //diversas regras de negocio
+                    if (kitsDeReanimacao) context.commit('setKitsDeReanimacao', dados.kitsDeReanimacao);
+
+                });
+
+        },
+        fetchProfissionais(context) {
+            fetch("http://localhost:3001/enfermeiros")
+                .then((response) => response.json())
+                .then((dados) => context.commit('setEnfermeiros', dados));
+
+            fetch("http://localhost:3001/socorristas")
+                .then((response) => response.json())
+                .then((dados) => context.commit('setSocorristas', dados));
+
+            fetch("http://localhost:3001/medicos")
+                .then((response) => response.json())
+                .then((dados) => context.commit('setMedicos', dados));
 
         }
     }
