@@ -2,7 +2,9 @@
   <div>
     <div class="row">
       <div class="col">
-        <h5 :class="corTitulo"><i class="bi-boxes me-2"></i>{{ tituloCustomizadoLocal }}</h5>
+        <h5 :class="corTitulo">
+          <i class="bi-boxes me-2"></i>{{ tituloCustomizadoLocal }}
+        </h5>
       </div>
     </div>
     <div class="row">
@@ -31,13 +33,19 @@
           <div class="col">
             <img
               class="img-fluid"
-              :src="require('@/assets/ambulancias/indefinida.png')"
+              :src="require(`@/assets/ambulancias/${imgAmbulancia}`)"
             />
           </div>
         </div>
         <div class="row mt-3">
           <div class="col">
-            <button type="button" class="btn btn-primary">Montar equipe</button>
+            <button 
+              type="button" 
+              class="btn btn-primary" 
+              @click="montarEquipe" 
+            >
+              Montar equipe
+            </button>
           </div>
         </div>
       </div>
@@ -73,13 +81,28 @@ export default {
         return `${this.titulo} - ${state.equipe.carro}`;
       },
     }),
-    corTitulo(){
+    corTitulo() {
       let testeLogico = true;
-      if(testeLogico){
-        return 'text-danger'
+      if (testeLogico) {
+        return "text-danger";
       }
-      return 'text-primary'
-    }
+      return "text-primary";
+    },
+    imgAmbulancia() {
+      if (this.kitDeReanimacao) {
+        return "uti.png";
+      }
+      if (this.carro) {
+        return "simples.png";
+      }
+      return "indefinida.png";
+    },
   },
+  methods:{
+    montarEquipe(){
+      let equipe = Object.assign({},this.$store.state.equipe);
+      this.$store.commit('adicionarEquipeEmEquipes',equipe);
+    }
+  }
 };
 </script>
