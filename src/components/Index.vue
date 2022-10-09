@@ -1,14 +1,12 @@
 <template>
   <div>
-    
     <nav class="navbar navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">{{tituloCustomizado}}</a>
+        <a class="navbar-brand" href="#">{{ tituloCustomizado }}</a>
       </div>
     </nav>
 
     <div class="container">
-
       <div class="row mt-5">
         <div class="col-6 p">
           <profissionais />
@@ -35,26 +33,63 @@
 </template>
 
 <script>
-import ConfiguracaoEquipe from './ConfiguracaoEquipe.vue'
-import Equipamentos from './Equipamentos.vue'
-import Equipes from './Equipes.vue'
-import Profissionais from './Profissionais.vue'
+import { mapMutations } from "vuex";
+import ConfiguracaoEquipe from "./ConfiguracaoEquipe.vue";
+import Equipamentos from "./Equipamentos.vue";
+import Equipes from "./Equipes.vue";
+import Profissionais from "./Profissionais.vue";
 
 export default {
-  components: { 
+  components: {
     ConfiguracaoEquipe,
     Equipamentos,
     Equipes,
-    Profissionais
+    Profissionais,
   },
-  name: 'Index',
+  name: "Index",
   props: {
-    msg: String
+    msg: String,
   },
-  computed:{
-    tituloCustomizado(){
+  computed: {
+    tituloCustomizado() {
       return `.: ${this.$store.state.titulo}`;
-    }
-  }
-}
+    },
+  },
+  methods: {
+    ...mapMutations([
+      "setEnfermeiros",
+      "setSocorristas",
+      "setMedicos",
+      "setCarros",
+      "setTelefones",
+      "setKitsDeReanimacao",
+    ]),
+  },
+  created() {
+    fetch("http://localhost:3001/enfermeiros")
+      .then((response) => response.json())
+      .then((dados) => this.setEnfermeiros(dados));
+
+    fetch("http://localhost:3001/socorristas")
+      .then((response) => response.json())
+      .then((dados) => this.setSocorristas(dados));
+
+    fetch("http://localhost:3001/medicos")
+      .then((response) => response.json())
+      .then((dados) => this.setMedicos(dados));
+
+    // fetch("http://localhost:3001/equipamentos")
+    //   .then((response) => response.json())
+    //   .then((dados) => {
+    //     this.setCarros(dados.carros);
+    //     this.setTelefones(dados);
+    //     this.setKitsDeReanimacao(dados);
+    //   });
+    fetch("http://localhost:3001/equipamentos")
+      .then((response) => response.json())
+      .then((dados) => {
+        this.$store.dispatch("adicionarEquipamentos", dados);
+      });
+  },
+};
 </script>
